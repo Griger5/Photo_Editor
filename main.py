@@ -5,7 +5,7 @@ class PhotoEditor(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Photo Editor")
-        self.setGeometry(500, 500, 500, 500)
+        self.setGeometry(500, 500, 800, 800)
         
         self.setCentralWidget(Workspace())
         self.showMaximized()

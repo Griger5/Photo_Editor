@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QFileDialog
 import numpy as np
 import matplotlib.pyplot as plt
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QFileDialog
 from canvas import MplCanvas
 
 class Workspace(QWidget):
@@ -61,8 +61,8 @@ class Workspace(QWidget):
             widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
             index -= 1
 
-        placeholderbut3 = QPushButton("Placeholder")
-        placeholderbut4 = QPushButton("Placeholder")
+        self.saveFileButton = QPushButton("Save file")
+
         self.setStyleSheet("QPushButton {margin-left: 60px; margin-right: 60px; padding-top: 15px; padding-bottom: 15px;}")
 
         self.openFileButton = QPushButton("Open an image")
@@ -75,8 +75,7 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(addRedLayout)
         vLayoutLeft.addLayout(addGreenLayout)
         vLayoutLeft.addLayout(addBlueLayout)
-        vLayoutRight.addWidget(placeholderbut3)
-        vLayoutRight.addWidget(placeholderbut4)
+        vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
         self.mainLayout.addWidget(self.openFileButton, 0, 2, 5, 3)
@@ -105,6 +104,8 @@ class Workspace(QWidget):
         self.addBlueButtonx50.clicked.connect(lambda: self.canvas.addColor("b", 50))
         self.addBlueButtonReverse.clicked.connect(lambda: self.canvas.reverseAddColor("b"))
 
+        self.saveFileButton.clicked.connect(self.saveFile)
+
     def openFile(self):
         filename, _ = QFileDialog.getOpenFileName(self)
         
@@ -113,5 +114,15 @@ class Workspace(QWidget):
             self.canvas = MplCanvas(file=filename)
             self.mainLayout.addWidget(self.canvas, 0, 2, 5, 3)
             self.initFunc()
+        else:
+            ...
+
+    def saveFile(self):
+        filename, _ = QFileDialog.getSaveFileName(self)
+        
+        if filename.lower().endswith((".jpg", ".jpeg", ".webp", ".png")):
+            plt.imsave(filename, self.canvas.normalized_img.astype(np.uint8))
+        elif filename:
+            plt.imsave(filename+".png", self.canvas.normalized_img.astype(np.uint8))
         else:
             ...
