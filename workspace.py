@@ -60,10 +60,22 @@ class Workspace(QWidget):
             widget = addBlueLayout.itemAt(index).widget()
             widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
             index -= 1 """
+        
+        self.setRedToZeroButton = QPushButton("Set red to zero")
+        self.setGreenToZeroButton = QPushButton("Set green to zero")
+        self.setBlueToZeroButton = QPushButton("Set blue to zero")
+        setToZeroLayout = QVBoxLayout()
+        setToZeroLayout.addWidget(self.setRedToZeroButton)
+        setToZeroLayout.addWidget(self.setGreenToZeroButton)
+        setToZeroLayout.addWidget(self.setBlueToZeroButton)
 
         self.toggleRedChannelButton = QPushButton("Red channel enabled")
         self.toggleGreenChannelButton = QPushButton("Green channel enabled")
         self.toggleBlueChannelButton = QPushButton("Blue channel enabled")
+        toggleColorChannelLayout = QVBoxLayout()
+        toggleColorChannelLayout.addWidget(self.toggleRedChannelButton)
+        toggleColorChannelLayout.addWidget(self.toggleGreenChannelButton)
+        toggleColorChannelLayout.addWidget(self.toggleBlueChannelButton)
 
         self.saveFileButton = QPushButton("Save file")
 
@@ -79,9 +91,11 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(addRedLayout)
         vLayoutLeft.addLayout(addGreenLayout)
         vLayoutLeft.addLayout(addBlueLayout)
-        vLayoutLeft.addWidget(self.toggleRedChannelButton)
-        vLayoutLeft.addWidget(self.toggleGreenChannelButton)
-        vLayoutLeft.addWidget(self.toggleBlueChannelButton)
+        vLayoutLeft.addLayout(setToZeroLayout)
+        #vLayoutLeft.addWidget(self.toggleRedChannelButton)
+        #vLayoutLeft.addWidget(self.toggleGreenChannelButton)
+        #vLayoutLeft.addWidget(self.toggleBlueChannelButton)
+        vLayoutLeft.addLayout(toggleColorChannelLayout)
         vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
@@ -110,6 +124,10 @@ class Workspace(QWidget):
         self.addBlueButtonx25.clicked.connect(lambda: self.canvas.addColor("b", 25))
         self.addBlueButtonx50.clicked.connect(lambda: self.canvas.addColor("b", 50))
         self.addBlueButtonReverse.clicked.connect(lambda: self.canvas.reverseAddColor("b"))
+
+        self.setRedToZeroButton.clicked.connect(lambda: self.canvas.setColorToZero("r"))
+        self.setGreenToZeroButton.clicked.connect(lambda: self.canvas.setColorToZero("g"))
+        self.setBlueToZeroButton.clicked.connect(lambda: self.canvas.setColorToZero("b"))
 
         self.toggleRedChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("r"))
         self.toggleRedChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleRedChannelButton, "Red channel enabled", "Red channel disabled"))

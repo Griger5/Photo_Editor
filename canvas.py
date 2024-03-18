@@ -67,6 +67,11 @@ class MplCanvas(FigureCanvasQTAgg):
     def reverseAddColor(self, color):
         self.addColorReverse[color] = not self.addColorReverse[color]
 
+    def setColorToZero(self, color):
+        self.img[:,:,self.colors[color]] = 0
+        self.setFixedImage(color)
+        self.updateImage()
+
     def toggleColorChannels(self, color):
         if self.colorChannels[color]:
             self.fixed_img[:,:,self.colors[color]] = 0
