@@ -27,10 +27,20 @@ class MplCanvas(FigureCanvasQTAgg):
         # necessary to keep the differences in color values between pixels intact
         self.normalized_img = np.copy(self.img)
 
+        self.colors = {"r":0, "g":1, "b":2}
         self.addColorReverse = {"r":False, "g":False, "b":False}
+        self.colorChannels = {"r":True, "g":True, "b":True}
 
         plt.draw()
         super().__init__(self.fig)
+
+    def saveImage(self, filename):
+        if filename.lower().endswith((".jpg", ".jpeg", ".webp", ".png")):
+            plt.imsave(filename, self.normalized_img.astype(np.uint8))
+        elif filename:
+            plt.imsave(filename+".png", self.normalized_img.astype(np.uint8))
+        else:
+            ...
 
     def updateImage(self):
         self.axes.clear()
@@ -40,14 +50,26 @@ class MplCanvas(FigureCanvasQTAgg):
 
     def normalize(self, color):
         rows = self.img[:,0,0].shape[0]
-        for i in range(rows):
-            self.normalized_img[:,:,color][i] = np.array([255 if x>255 else 0 if x<0 else x for x in self.img[:,:,color][i]])
+        if self.colorChannels[color]:
+            for i in range(rows):
+                self.normalized_img[:,:,self.colors[color]][i] = np.array([255 if x>255 else 0 if x<0 else x for x in self.img[:,:,self.colors[color]][i]])
+        else:
+            self.normalized_img[:,:,self.colors[color]] = 0
 
     def addColor(self, color, multiplier):
-        colors = {"r":0, "g":1, "b":2}
         multiplier = -multiplier if self.addColorReverse[color] else multiplier
-        self.img[:,:,colors[color]] = self.img[:,:,colors[color]]+np.ones(self.img[:,:,0].shape)*multiplier
-        self.normalize(colors[color])
+        self.img[:,:,self.colors[color]] = self.img[:,:,self.colors[color]]+np.ones(self.img[:,:,0].shape)*multiplier
+        self.normalize(color)
         self.updateImage()
     def reverseAddColor(self, color):
-        self.addColorReverse[color] = ~self.addColorReverse[color]
+        self.addColorReverse[color] = not self.addColorReverse[color]
+
+    def toggleColorChannels(self, color):
+        if self.colorChannels[color]:
+            self.normalized_img[:,:,self.colors[color]] = 0
+        else:
+            rows = self.img[:,0,0].shape[0]
+            for i in range(rows):
+                self.normalized_img[:,:,self.colors[color]][i] = np.array([255 if x>255 else 0 if x<0 else x for x in self.img[:,:,self.colors[color]][i]])
+        self.colorChannels[color] = not self.colorChannels[color]
+        self.updateImage()

@@ -51,7 +51,7 @@ class Workspace(QWidget):
 
         # we iterate through all the layouts' widgets to set stylesheets on them
         # all layouts have the same count of widgets
-        index = addRedLayout.count()-1
+        """ index = addRedLayout.count()-1
         while(index >= 0):
             widget = addRedLayout.itemAt(index).widget()
             widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
@@ -59,11 +59,15 @@ class Workspace(QWidget):
             widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
             widget = addBlueLayout.itemAt(index).widget()
             widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
-            index -= 1
+            index -= 1 """
+
+        self.toggleRedChannelButton = QPushButton("Red channel enabled")
+        self.toggleGreenChannelButton = QPushButton("Green channel enabled")
+        self.toggleBlueChannelButton = QPushButton("Blue channel enabled")
 
         self.saveFileButton = QPushButton("Save file")
 
-        self.setStyleSheet("QPushButton {margin-left: 60px; margin-right: 60px; padding-top: 15px; padding-bottom: 15px;}")
+        self.setStyleSheet("QPushButton {margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;}")
 
         self.openFileButton = QPushButton("Open an image")
         self.openFileButton.setStyleSheet("margin-left: 300px; margin-right: 300px; padding-top: 10px; padding-bottom: 10px;")
@@ -75,6 +79,9 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(addRedLayout)
         vLayoutLeft.addLayout(addGreenLayout)
         vLayoutLeft.addLayout(addBlueLayout)
+        vLayoutLeft.addWidget(self.toggleRedChannelButton)
+        vLayoutLeft.addWidget(self.toggleGreenChannelButton)
+        vLayoutLeft.addWidget(self.toggleBlueChannelButton)
         vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
@@ -104,6 +111,13 @@ class Workspace(QWidget):
         self.addBlueButtonx50.clicked.connect(lambda: self.canvas.addColor("b", 50))
         self.addBlueButtonReverse.clicked.connect(lambda: self.canvas.reverseAddColor("b"))
 
+        self.toggleRedChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("r"))
+        self.toggleRedChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleRedChannelButton, "Red channel enabled", "Red channel disabled"))
+        self.toggleGreenChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("g"))
+        self.toggleGreenChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleGreenChannelButton, "Green channel enabled", "Green channel disabled"))
+        self.toggleBlueChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("b"))
+        self.toggleBlueChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleBlueChannelButton, "Blue channel enabled", "Blue channel disabled"))
+
         self.saveFileButton.clicked.connect(self.saveFile)
 
     def openFile(self):
@@ -120,9 +134,9 @@ class Workspace(QWidget):
     def saveFile(self):
         filename, _ = QFileDialog.getSaveFileName(self)
         
-        if filename.lower().endswith((".jpg", ".jpeg", ".webp", ".png")):
-            plt.imsave(filename, self.canvas.normalized_img.astype(np.uint8))
-        elif filename:
-            plt.imsave(filename+".png", self.canvas.normalized_img.astype(np.uint8))
-        else:
-            ...
+        if filename:
+            self.canvas.saveImage(filename)
+
+    def toggleButtonText(self, button, text1, text2):
+        currentText = button.text()
+        button.setText(text1 if currentText == text2 else text2)
