@@ -79,3 +79,29 @@ class MplCanvas(FigureCanvasQTAgg):
             self.normalize(color)
         self.colorChannels[color] = not self.colorChannels[color]
         self.updateImage()
+
+    def boxBlur(self):
+        temp = np.copy(self.img)
+        rows, columns = self.img[:,:,0].shape
+        # edge corners
+        self.img[0,0] = (temp[0,0]+temp[0,1]+temp[1,0]+temp[1,1])/4
+        self.img[0,-1] = (temp[0,-1]+temp[0,-2]+temp[1,-1]+temp[1,-2])/4
+        self.img[-1,0] = (temp[-1,0]+temp[-1,1]+temp[-2,0]+temp[-2,1])/4
+        self.img[-1,-1] = (temp[-1,-1]+temp[-1,-2]+temp[-2,-1]+temp[-2,-2])/4
+        # edge rows
+        for j in range(1,columns-1):
+            self.img[0,j] = (temp[0,j]+temp[0,j+1]+temp[1,j]+temp[0,j-1]+temp[1,j+1]+temp[1,j-1])/6
+            self.img[-1,j] = (temp[-1,j]+temp[-1,j+1]+temp[-2,j]+temp[-1,j-1]+temp[-2,j+1]+temp[-2,j-1])/6
+        # edge columns
+        for i in range(1,rows-1):
+            self.img[i,0] = (temp[i,0]+temp[i,1]+temp[i+1,0]+temp[i-1,0]+temp[i+1,1]+temp[i-1,1])/6
+            self.img[i,-1] = (temp[i,-1]+temp[i,-2]+temp[i+1,-1]+temp[i-1,-1]+temp[i+1,-2]+temp[i-1,-2])/6
+        #rest of the image
+        for i in range(1,rows-1):
+            for j in range(1,columns-1):
+                self.img[i,j] = (temp[i,j]+temp[i,j+1]+temp[i+1,j]+temp[i,j-1]+temp[i-1,j]+temp[i+1,j+1]+temp[i-1,j-1]+temp[i+1,j-1]+temp[i-1,j+1])/9
+
+        self.setFixedImage("r")
+        self.setFixedImage("g")
+        self.setFixedImage("b")
+        self.updateImage()

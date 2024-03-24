@@ -48,18 +48,6 @@ class Workspace(QWidget):
         addBlueLayout.addWidget(self.addBlueButtonx25, 1, 1)
         addBlueLayout.addWidget(self.addBlueButtonx50, 1, 2)
         addBlueLayout.addWidget(self.addBlueButtonReverse, 1, 3)
-
-        # we iterate through all the layouts' widgets to set stylesheets on them
-        # all layouts have the same count of widgets
-        """ index = addRedLayout.count()-1
-        while(index >= 0):
-            widget = addRedLayout.itemAt(index).widget()
-            widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
-            widget = addGreenLayout.itemAt(index).widget()
-            widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
-            widget = addBlueLayout.itemAt(index).widget()
-            widget.setStyleSheet("margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;")
-            index -= 1 """
         
         self.setRedToZeroButton = QPushButton("Set red to zero")
         self.setGreenToZeroButton = QPushButton("Set green to zero")
@@ -77,6 +65,8 @@ class Workspace(QWidget):
         toggleColorChannelLayout.addWidget(self.toggleGreenChannelButton)
         toggleColorChannelLayout.addWidget(self.toggleBlueChannelButton)
 
+        self.boxBlurButton = QPushButton("Box blur")
+
         self.saveFileButton = QPushButton("Save file")
 
         self.setStyleSheet("QPushButton {margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;}")
@@ -92,10 +82,8 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(addGreenLayout)
         vLayoutLeft.addLayout(addBlueLayout)
         vLayoutLeft.addLayout(setToZeroLayout)
-        #vLayoutLeft.addWidget(self.toggleRedChannelButton)
-        #vLayoutLeft.addWidget(self.toggleGreenChannelButton)
-        #vLayoutLeft.addWidget(self.toggleBlueChannelButton)
         vLayoutLeft.addLayout(toggleColorChannelLayout)
+        vLayoutRight.addWidget(self.boxBlurButton)
         vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
@@ -135,6 +123,8 @@ class Workspace(QWidget):
         self.toggleGreenChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleGreenChannelButton, "Green channel enabled", "Green channel disabled"))
         self.toggleBlueChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("b"))
         self.toggleBlueChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleBlueChannelButton, "Blue channel enabled", "Blue channel disabled"))
+
+        self.boxBlurButton.clicked.connect(self.canvas.boxBlur)
 
         self.saveFileButton.clicked.connect(self.saveFile)
 
