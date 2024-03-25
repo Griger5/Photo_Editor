@@ -65,7 +65,9 @@ class Workspace(QWidget):
         toggleColorChannelLayout.addWidget(self.toggleGreenChannelButton)
         toggleColorChannelLayout.addWidget(self.toggleBlueChannelButton)
 
-        self.boxBlurButton = QPushButton("Box blur")
+        self.boxBlur3x3Button = QPushButton("Box blur")
+
+        self.sepiaFilterButton = QPushButton("Sepia filter")
 
         self.saveFileButton = QPushButton("Save file")
 
@@ -83,7 +85,8 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(addBlueLayout)
         vLayoutLeft.addLayout(setToZeroLayout)
         vLayoutLeft.addLayout(toggleColorChannelLayout)
-        vLayoutRight.addWidget(self.boxBlurButton)
+        vLayoutRight.addWidget(self.boxBlur3x3Button)
+        vLayoutRight.addWidget(self.sepiaFilterButton)
         vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
@@ -124,7 +127,9 @@ class Workspace(QWidget):
         self.toggleBlueChannelButton.clicked.connect(lambda: self.canvas.toggleColorChannels("b"))
         self.toggleBlueChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleBlueChannelButton, "Blue channel enabled", "Blue channel disabled"))
 
-        self.boxBlurButton.clicked.connect(self.canvas.boxBlur)
+        self.boxBlur3x3Button.clicked.connect(self.canvas.boxBlur3x3)
+
+        self.sepiaFilterButton.clicked.connect(self.canvas.sepiaTone)
 
         self.saveFileButton.clicked.connect(self.saveFile)
 

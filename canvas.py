@@ -80,7 +80,7 @@ class MplCanvas(FigureCanvasQTAgg):
         self.colorChannels[color] = not self.colorChannels[color]
         self.updateImage()
 
-    def boxBlur(self):
+    def boxBlur3x3(self):
         temp = np.copy(self.img)
         rows, columns = self.img[:,:,0].shape
         # edge corners
@@ -101,6 +101,18 @@ class MplCanvas(FigureCanvasQTAgg):
             for j in range(1,columns-1):
                 self.img[i,j] = (temp[i,j]+temp[i,j+1]+temp[i+1,j]+temp[i,j-1]+temp[i-1,j]+temp[i+1,j+1]+temp[i-1,j-1]+temp[i+1,j-1]+temp[i-1,j+1])/9
 
+        self.setFixedImage("r")
+        self.setFixedImage("g")
+        self.setFixedImage("b")
+        self.updateImage()
+
+    def sepiaTone(self):
+        rows, columns = self.img[:,:,0].shape
+        sepia = np.array([[0.393, 0.349, 0.272], [0.769, 0.686, 0.534], [0.189, 0.168, 0.131]])
+        for i in range(rows):
+            for j in range(columns):
+                self.img[i][j] = np.matmul(self.img[i][j], sepia)
+        
         self.setFixedImage("r")
         self.setFixedImage("g")
         self.setFixedImage("b")
