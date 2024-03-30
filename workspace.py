@@ -1,5 +1,3 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QFileDialog
 from canvas import MplCanvas
 
@@ -67,6 +65,8 @@ class Workspace(QWidget):
 
         self.boxBlur3x3Button = QPushButton("Box blur")
 
+        self.sharpenButton = QPushButton("Sharpen image")
+
         self.sepiaFilterButton = QPushButton("Sepia filter")
 
         self.saveFileButton = QPushButton("Save file")
@@ -86,6 +86,7 @@ class Workspace(QWidget):
         vLayoutLeft.addLayout(setToZeroLayout)
         vLayoutLeft.addLayout(toggleColorChannelLayout)
         vLayoutRight.addWidget(self.boxBlur3x3Button)
+        vLayoutRight.addWidget(self.sharpenButton)
         vLayoutRight.addWidget(self.sepiaFilterButton)
         vLayoutRight.addWidget(self.saveFileButton)
 
@@ -128,6 +129,8 @@ class Workspace(QWidget):
         self.toggleBlueChannelButton.clicked.connect(lambda: self.toggleButtonText(self.toggleBlueChannelButton, "Blue channel enabled", "Blue channel disabled"))
 
         self.boxBlur3x3Button.clicked.connect(self.canvas.boxBlur3x3)
+
+        self.sharpenButton.clicked.connect(self.canvas.sharpen)
 
         self.sepiaFilterButton.clicked.connect(self.canvas.sepiaTone)
 
