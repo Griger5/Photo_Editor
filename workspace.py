@@ -69,6 +69,16 @@ class Workspace(QWidget):
 
         self.sepiaFilterButton = QPushButton("Sepia filter")
 
+        self.sortByRedButton = QPushButton("Sort by red")
+        self.sortByGreenButton = QPushButton("Sort by green")
+        self.sortByBlueButton = QPushButton("Sort by blue")
+        self.sortBySumButton = QPushButton("Sort by sum of RGB value")
+        sortByPixelsLayout = QVBoxLayout()
+        sortByPixelsLayout.addWidget(self.sortByRedButton)
+        sortByPixelsLayout.addWidget(self.sortByGreenButton)
+        sortByPixelsLayout.addWidget(self.sortByBlueButton)
+        sortByPixelsLayout.addWidget(self.sortBySumButton)
+
         self.saveFileButton = QPushButton("Save file")
 
         self.setStyleSheet("QPushButton {margin-left: 10px; margin-right: 10px; padding-top: 10px; padding-bottom: 10px;}")
@@ -88,6 +98,7 @@ class Workspace(QWidget):
         vLayoutRight.addWidget(self.boxBlur3x3Button)
         vLayoutRight.addWidget(self.sharpenButton)
         vLayoutRight.addWidget(self.sepiaFilterButton)
+        vLayoutRight.addLayout(sortByPixelsLayout)
         vLayoutRight.addWidget(self.saveFileButton)
 
         self.mainLayout.addLayout(vLayoutLeft, 0, 0, 5, 1)
@@ -133,6 +144,11 @@ class Workspace(QWidget):
         self.sharpenButton.clicked.connect(self.canvas.sharpen)
 
         self.sepiaFilterButton.clicked.connect(self.canvas.sepiaTone)
+
+        self.sortByRedButton.clicked.connect(lambda: self.canvas.sortByColor("r"))
+        self.sortByGreenButton.clicked.connect(lambda: self.canvas.sortByColor("g"))
+        self.sortByBlueButton.clicked.connect(lambda: self.canvas.sortByColor("b"))
+        self.sortBySumButton.clicked.connect(self.canvas.sortBySum)
 
         self.saveFileButton.clicked.connect(self.saveFile)
 

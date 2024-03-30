@@ -5,6 +5,8 @@ from matplotlib.figure import Figure
 import matplotlib
 matplotlib.use('QtAgg')
 
+import sort_func as sort
+
 class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, file, parent=None, width=1, height=1, dpi=100):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
@@ -126,6 +128,28 @@ class MplCanvas(FigureCanvasQTAgg):
             for j in range(columns):
                 self.img[i][j] = np.matmul(self.img[i][j], sepia)
         
+        self.setFixedImage("r")
+        self.setFixedImage("g")
+        self.setFixedImage("b")
+        self.updateImage()
+
+    def sortByColor(self, color):
+        rows, cols, _ = self.img.shape
+        self.img = self.img.reshape(rows*cols, 3)
+        sort.mergeSortByColor(self.img, 0, len(self.img)-1, self.colors[color])
+        self.img = self.img.reshape(rows, cols, 3)
+
+        self.setFixedImage("r")
+        self.setFixedImage("g")
+        self.setFixedImage("b")
+        self.updateImage()
+
+    def sortBySum(self):
+        rows, cols, _ = self.img.shape
+        self.img = self.img.reshape(rows*cols, 3)
+        sort.mergeSortBySum(self.img, 0, len(self.img)-1)
+        self.img = self.img.reshape(rows, cols, 3)
+
         self.setFixedImage("r")
         self.setFixedImage("g")
         self.setFixedImage("b")
