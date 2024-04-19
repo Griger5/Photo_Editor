@@ -1,6 +1,14 @@
 from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QFileDialog
 from canvas import MplCanvas
 
+import subprocess
+
+try:
+    subprocess.check_output("nvidia-smi")
+    gpu_present = True
+except Exception:
+    gpu_present = False
+
 class Workspace(QWidget):
     def __init__(self):
         super().__init__()
@@ -143,7 +151,10 @@ class Workspace(QWidget):
 
         self.sharpenButton.clicked.connect(self.canvas.sharpen)
 
-        self.sepiaFilterButton.clicked.connect(self.canvas.sepiaTone)
+        if gpu_present:
+            self.sepiaFilterButton.clicked.connect(self.canvas.sepiaToneGPU)
+        else:
+            self.sepiaFilterButton.clicked.connect(self.canvas.sepiaToneCPU)
 
         self.sortByRedButton.clicked.connect(lambda: self.canvas.sortByColor("r"))
         self.sortByGreenButton.clicked.connect(lambda: self.canvas.sortByColor("g"))

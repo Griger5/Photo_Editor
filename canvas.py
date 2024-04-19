@@ -5,7 +5,10 @@ from matplotlib.figure import Figure
 import matplotlib
 matplotlib.use('QtAgg')
 
+from numba import cuda
+
 import sort_func as sort
+import gpu_funcs as gpuf
 
 class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, file, parent=None, width=1, height=1, dpi=100):
@@ -121,13 +124,33 @@ class MplCanvas(FigureCanvasQTAgg):
         self.setFixedImage("b")
         self.updateImage()
 
-    def sepiaTone(self):
+    def sepiaToneCPU(self):
         rows, columns = self.img[:,:,0].shape
         sepia = np.array([[0.393, 0.349, 0.272], [0.769, 0.686, 0.534], [0.189, 0.168, 0.131]])
         for i in range(rows):
             for j in range(columns):
                 self.img[i][j] = np.matmul(self.img[i][j], sepia)
         
+        self.setFixedImage("r")
+        self.setFixedImage("g")
+        self.setFixedImage("b")
+        self.updateImage()
+        
+    def sepiaToneGPU(self):
+        sepia = np.array([[0.393, 0.349, 0.272], [0.769, 0.686, 0.534], [0.189, 0.168, 0.131]])
+        rows, columns, colors = self.img.shape
+        self.img = self.img.reshape(rows*columns, colors)
+
+        d_result = cuda.device_array_like(self.img)
+
+        device = cuda.get_current_device()
+        SMs_count = getattr(device, "MULTIPROCESSOR_COUNT")
+
+        gpuf.sepiaToneGPU[SMs_count,1024](self.img, rows*columns, sepia, d_result)
+
+        self.img = d_result.copy_to_host()
+        self.img = self.img.reshape(rows, columns, colors)
+
         self.setFixedImage("r")
         self.setFixedImage("g")
         self.setFixedImage("b")
